@@ -5,6 +5,8 @@ github.com/OpenNebula/one v0.0.0-20200122181521-9d734e02dac1 h1:Hi8sMUvILqcccf5N
 github.com/OpenNebula/one/src/oca/go/src/goca v0.0.0-20200110145547-337d92ea4fdc h1:63ZFbLxIXMCvxDJOmAvK4vuqxcQETE++RvMFyURMslA=
 github.com/OpenNebula/one/src/oca/go/src/goca v0.0.0-20200110145547-337d92ea4fdc/go.mod h1:dvAwZi1Aol7eu6BENzHtl8ztGBkacB9t/fJj+fYk+Xg=
 github.com/OpenNebula/one/src/oca/go/src/goca v0.0.0-20200122181521-9d734e02dac1 h1:RR8k8xCmaOtEouausJKt0yFNN52K6oH5ViPnF7yHIfs=
+github.com/OpenNebula/one/src/oca/go/src/goca v0.0.0-20220809151027-24a3c4cf20f2 h1:/daOOM/GBQRr3/L85lqDtmLMWrRKbZr7PL3kV7k3rGs=
+github.com/OpenNebula/one/src/oca/go/src/goca v0.0.0-20220809151027-24a3c4cf20f2/go.mod h1:dvAwZi1Aol7eu6BENzHtl8ztGBkacB9t/fJj+fYk+Xg=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 h1:JYp7IbQjafoB+tBA3gMyHYHrpOtNuDiK/uB5uXxq5wM=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=

@@ -7,8 +7,6 @@ import (
 	"github.com/go-kit/kit/log/level"
 
 	"github.com/OpenNebula/one/src/oca/go/src/goca"
-	gocaHost "github.com/OpenNebula/one/src/oca/go/src/goca/schemas/host"
-
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
@@ -69,6 +67,11 @@ func initMetrics() {
 			Name: "one_host_runningvms",
 			Help: "running virtual machines on host",
 		}, []string{"cluster", "host"})
+
+		hostMetrics["State"] = promauto.NewGaugeVec(prometheus.GaugeOpts{
+			Name: "one_host_state",
+			Help: "state of host",
+		}, []string{"cluster", "host", "state"})
 	}
 
 	/*
@@ -108,18 +111,6 @@ func initMetrics() {
 		clusterMetrics["CPUUsage"] = promauto.NewGaugeVec(prometheus.GaugeOpts{
 			Name: "one_cluster_cpuusage",
 			Help: "total allocated cpu in cluster",
-		}, []string{"cluster"})
-
-		// Nr of VMs and Hosts
-
-		clusterMetrics["RunningVMs"] = promauto.NewGaugeVec(prometheus.GaugeOpts{
-			Name: "one_cluster_runningvms",
-			Help: "running virtual machines in cluster",
-		}, []string{"cluster"})
-
-		clusterMetrics["ActiveHosts"] = promauto.NewGaugeVec(prometheus.GaugeOpts{
-			Name: "one_cluster_activehosts",
-			Help: "successfully monitored hosts in cluster",
 		}, []string{"cluster"})
 	}
 
@@ -212,8 +203,14 @@ func recordHostMetrics(controller *goca.Controller, logger log.Logger) {
 
 	for _, host := range pool.Hosts {
 
+		state, err := host.State()
+		if err != nil {
+			level.Error(logger).Log("msg", "error retrieving state from host", "host", host.Name, "error", err)
+			continue
+		}
 		level.Debug(logger).Log("msg", "host metrics",
 			"host", host.Name,
+			"state", state,
 			"TotalMem", host.Share.TotalMem,
 			"MaxMem", host.Share.MaxMem,
 			"MemUsage", host.Share.MemUsage,
@@ -230,6 +227,7 @@ func recordHostMetrics(controller *goca.Controller, logger log.Logger) {
 		hostMetrics["MaxCPU"].With(prometheus.Labels{"cluster": host.Cluster, "host": host.Name}).Set(float64(host.Share.MaxCPU))
 		hostMetrics["CPUUsage"].With(prometheus.Labels{"cluster": host.Cluster, "host": host.Name}).Set(float64(host.Share.CPUUsage))
 		hostMetrics["RunningVMs"].With(prometheus.Labels{"cluster": host.Cluster, "host": host.Name}).Set(float64(host.Share.RunningVMs))
+		hostMetrics["State"].With(prometheus.Labels{"cluster": host.Cluster, "host": host.Name, "state": state.String()}).Set(float64(host.StateRaw))
 
 		// sum cluster metrics
 		sum[metrics{host.Cluster, "TotalMem"}] = sum[metrics{host.Cluster, "TotalMem"}] + host.Share.TotalMem
@@ -238,11 +236,6 @@ func recordHostMetrics(controller *goca.Controller, logger log.Logger) {
 		sum[metrics{host.Cluster, "TotalCPU"}] = sum[metrics{host.Cluster, "TotalCPU"}] + host.Share.TotalCPU
 		sum[metrics{host.Cluster, "MaxCPU"}] = sum[metrics{host.Cluster, "MaxCPU"}] + host.Share.MaxCPU
 		sum[metrics{host.Cluster, "CPUUsage"}] = sum[metrics{host.Cluster, "CPUUsage"}] + host.Share.CPUUsage
-		sum[metrics{host.Cluster, "RunningVMs"}] = sum[metrics{host.Cluster, "RunningVMs"}] + host.Share.RunningVMs
-
-		if host.StateRaw == gocaHost.Monitored {
-			sum[metrics{host.Cluster, "ActiveHosts"}] = sum[metrics{host.Cluster, "ActiveHosts"}] + 1
-		}
 	}
 
 	for key, value := range sum {

@@ -201,6 +201,8 @@ func recordHostMetrics(controller *goca.Controller, logger log.Logger) {
 	}
 	sum := make(map[metrics]int)
 
+	//reset the state metrics, as the State name is stored as label
+	hostMetrics["State"].Reset()
 	for _, host := range pool.Hosts {
 
 		state, err := host.State()
@@ -251,6 +253,9 @@ func recordVmMetrics(controller *goca.Controller, logger log.Logger) {
 		return
 	}
 
+	//reset the state metrics, as the State name is stored as label
+	vMMetrics["State"].Reset()
+	vMMetrics["LCMState"].Reset()
 	for _, vm := range vms.VMs {
 
 		state, lcmState, err := vm.State()
@@ -289,6 +294,8 @@ func recordDataStoreMetrics(controller *goca.Controller, logger log.Logger) {
 		return
 	}
 
+	//reset the state metrics, as the State name is stored as label
+	datastoreMetrics["State"].Reset()
 	for _, datastore := range datastores.Datastores {
 
 		state, err := datastore.State()

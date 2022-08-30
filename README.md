@@ -9,6 +9,9 @@ You can run the one exporter with the `-c` flag pointing to its configuration fi
 
 Use the `--help` flag for more information.
 
+## Grafana
+
+In the folder `grafana` you find json descriptions to show the exported data in a grafana dashboard
 
 ## Configuration
 
